@@ -1,6 +1,6 @@
 Ryan Schneider
-U35985938
-schneidr@bu.edu
+*
+*
 
 Explanation:
 	The requirement was to create a file system that runs on top of a virtual disk.  To create a file system (mine modeled after FAT) , it must maintain key variables. These are the super block, the directory and the file allocation table and the data itself. 
