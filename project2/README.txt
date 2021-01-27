@@ -1,6 +1,6 @@
 Author: Ryan Schneider
-BUID: U35985938
-Email: schneidr@bu.edu
+BUID: *
+Email: *
 
 Explanation:
 
