@@ -1,0 +1,31 @@
+Ryan Schneider
+U35985938
+schneidr@bu.edu
+
+Explanation:
+	The requirement was to create a file system that runs on top of a virtual disk.  To create a file system (mine modeled after FAT) , it must maintain key variables. These are the super block, the directory and the file allocation table and the data itself. 
+
+The file allocation table tells us what blocks of the virtual disk are empty, full, and the mapping of the data. I.E a file couple be mapped to something like block 1 contains the number 2, which tell us the next block of memory is 2, and then block 2 contains 3, which tells us the next block of memory is 3, and then block 3 contains the End Of File Number (EOF , which i designated as -99) , which tells us that block 3 is the last block in the map.
+
+The file descriptors keep track of file offsets and what files are being used by the executing program (what disk operations are being performed). The executing program that is using the file system will use fs_open to access a file, the file descriptor will know where the file begins and keep track of its byte offset into it. For each function that uses file descriptors in the file system, it is important we check if they are valid are not to avoid indexing outside the bounds of our array, or accidentally writing to a file.
+
+The directory is used to keep track of file sizes ,file names, the reference count (for file descriptors that point to this file), and the first block in each file. This is just stored in a struct array.
+
+The superblock keeps track of the block index and block length of the file directory and the block index of the FAT and block length of the FAT. In this implementation, the super_block is always stored at block  0. This means it takes up a full block.
+
+The allocation for these variables was calulated using the size of each and the block size (4096 bytes). We know that the size of a struct is the sum of its variables. So to achieve the extra credit , I assigned the smallest amount of neccassary blocks to each. So I found the size of the directory struck and multipled it by total files, and this was able to fit in 1 block. The FAT consisted of 8192 ints so multiplying this by 4 bytes showed that we needed 9 blocks to contain this information. 
+
+make_fs, mount_fs, umount_fs, all interface and save or load these variables (make_fs init and save, mount_fs load, umount_fs save) , to properly make a disk, and mount an unmount the disk. So the between processes we are able to use the file system
+
+fs_create creates a directory entry and a assigns one block to the newly created file using the FAT. 
+
+to properly perform the read and write functions, I thought of every case and created a write case in the write function , and created a read case in the read function. So for this explanation, when I say read/write i am referring to the read function and the write function, as I first wrote the write function and then adapted it for read_fs so they are very similar.  For my implementation, my first if statement handles reading/write from an offset to the end of a block ONLY if the read/write requested multiple blocks, the loop only handles multiple blocks, and the two if statements at the end handle 1) the remainder if there was multiple blocks read/write 2) the remainder if there was NO blocks read/write (works with offset). Then I added at the top, an if statement that flags to skip the first if statement if the file size is too large (becaue than the rest will be handled by the remainder).I added the saame if statement to the read, and added another one to make sure it does not read over the end of a file. 
+
+The file descriptor functions simply interacted with the file descriptor array to find open/delete/l_seek file descriptors. fs_truncate incorporates this but just iterates to the end of a file and then deletes blocks until the requested size. 
+
+
+Problems:
+Some lag with SSH, but no major problems.
+
+Resources:
+www.geeksforgeeks.org/find-ceil-ab-without-using-ceil-function/     // used for finding ceil without using math function
